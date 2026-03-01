@@ -1,17 +1,12 @@
 package de.danoeh.antennapod;
 
 import android.util.Log;
-
-import de.danoeh.antennapod.system.CrashReportWriter;
+import de.danoeh.antennapod.core.util.CrashReportWriter;
 import io.reactivex.rxjava3.exceptions.UndeliverableException;
 import io.reactivex.rxjava3.plugins.RxJavaPlugins;
 
 public class RxJavaErrorHandlerSetup {
     private static final String TAG = "RxJavaErrorHandler";
-
-    private RxJavaErrorHandlerSetup() {
-
-    }
 
     public static void setupRxJavaErrorHandler() {
         RxJavaPlugins.setErrorHandler(exception -> {
@@ -32,6 +27,8 @@ public class RxJavaErrorHandlerSetup {
                 Thread.currentThread().getUncaughtExceptionHandler()
                         .uncaughtException(Thread.currentThread(), exception);
             }
+            // In release builds, swallow the exception to prevent app crashes
+            // from undeliverable RxJava errors (e.g. NPEs after disposal)
         });
     }
 }
